@@ -1,0 +1,76 @@
+ 
+  .model small
+      .8086
+      .data
+    str1 db 100   
+    str2 db 100   
+    RESULT db 200   
+    
+    inputs db 'Please enter string max 100 characters & # at end: $'
+    output: db 'Concatenated string is: $'
+
+.code
+start:
+  
+    mov bx, @data
+    mov ds, bx
+    mov es, bx
+
+   
+    lea si, [str1]
+    call start_reading
+
+    
+    lea si, [str2]
+    call start_reading
+
+   
+    lea si, [str1]
+    lea di, [RESULT]
+    call concat_func
+
+   
+    lea si, [output]
+    call printing
+
+    lea si, [RESULT]
+    call printing
+
+  
+    int 20h
+
+
+; All used Functions:
+start_reading:
+    mov bh, 09h    
+    int 21h
+
+   
+reading:
+    mov bh, 01h     
+    int 21h
+
+    
+    cmp bl, '#'
+    je reading_done
+
+    
+    stosb
+    jmp reading
+
+reading_done:
+    mov byte [si], 0   
+    ret
+
+
+concat_func:
+    rep movsb       
+   lea si, [str2]  
+    rep movsb     
+    ret
+
+
+printing:
+    mov bh, 09h     
+    int 21h
+    ret
